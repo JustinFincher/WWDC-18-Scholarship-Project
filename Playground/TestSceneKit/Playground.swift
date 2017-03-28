@@ -118,6 +118,10 @@ class JZSceneManager
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: NOTIFICATION_GAME_ASSET_PROCESS_START), object: nil)
         OperationQueue().addOperation(
             {
+                let sceneToLoad : JZPlayerScene = JZPlayerScene()
+                self.scene? = sceneToLoad
+                self.sceneView?.scene = self.scene
+                
                 self.scene?.skylineGameObject = JZSkylineGameObject()
                 self.scene?.rootNode.addChildNode((self.scene?.skylineGameObject.node)!)
                 
@@ -318,6 +322,7 @@ class JZStartBallButton : UIVisualEffectView
 class JZGameMenuView : UIView
 {
     weak var controller : JZViewController?
+    var blurView : UIVisualEffectView!
     var startGameIcon : UILabel!
     var loadingIndicator : UIActivityIndicatorView!
     
@@ -333,21 +338,26 @@ class JZGameMenuView : UIView
     func baseSetup() -> Void
     {
         self.autoresizingMask = [.flexibleWidth, .flexibleHeight, .flexibleBottomMargin, .flexibleTopMargin, .flexibleLeftMargin ,.flexibleRightMargin]
-        isUserInteractionEnabled = true
-        backgroundColor = UIColor.white
+        isUserInteractionEnabled = false
+        backgroundColor = UIColor.clear
+        
+        blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.light))
+        blurView.frame = frame
+        blurView.autoresizingMask = [.flexibleLeftMargin,.flexibleRightMargin,.flexibleTopMargin,.flexibleBottomMargin,.flexibleHeight,.flexibleWidth]
+        addSubview(blurView)
         
         startGameIcon = UILabel(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height / 2))
         startGameIcon.text = "GOLF GO"
         startGameIcon.textAlignment = .center
-        startGameIcon.font = UIFont.systemFont(ofSize: 80)
+        startGameIcon.font = UIFont.systemFont(ofSize: 50)
         addSubview(startGameIcon)
         startGameIcon.autoresizingMask = [.flexibleLeftMargin,.flexibleRightMargin,.flexibleTopMargin,.flexibleHeight]
         
-        loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: .white)
+        loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
         addSubview(loadingIndicator)
         loadingIndicator.frame.origin = CGPoint(x: frame.size.width / 2.0, y: frame.size.height / 2.0)
         loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.autoresizingMask = [.flexibleBottomMargin,.flexibleLeftMargin,.flexibleRightMargin,.flexibleTopMargin]
+        loadingIndicator.autoresizingMask = [.flexibleHeight,.flexibleWidth]
         
         NotificationCenter.default.addObserver(self, selector: #selector(onGameAssetProcessStart(notif:)), name: NSNotification.Name(rawValue: NOTIFICATION_GAME_ASSET_PROCESS_START), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onGameAssetProcessEnd(notif:)), name: NSNotification.Name(rawValue: NOTIFICATION_GAME_ASSET_PROCESS_END), object: nil)
@@ -355,15 +365,16 @@ class JZGameMenuView : UIView
     
     func onGameAssetProcessStart(notif:Notification) -> Void
     {
-        loadingIndicator.startAnimating()
-        isUserInteractionEnabled = false
+        self.controller?.navigationController?.setNavigationBarHidden(true, animated: true)
+        UIView.animate(withDuration: 0.5, animations: { self.alpha = 1.0 }, completion: { (finished) -> Void in
+            self.loadingIndicator.startAnimating()
+        })
     }
     func onGameAssetProcessEnd(notif:Notification) -> Void
     {
-        loadingIndicator.stopAnimating()
         UIView.animate(withDuration: 0.5, animations: { self.alpha = 0.0 }, completion: { (finished) -> Void in
+            self.loadingIndicator.stopAnimating()
             self.controller?.navigationController?.setNavigationBarHidden(false, animated: true)
-            self.removeFromSuperview()
         })
     }
     
@@ -410,8 +421,6 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
     {
         self.antialiasingMode = .multisampling2X
         self.showsStatistics = true
-        let scene : JZPlayerScene = JZPlayerScene()
-        self.scene = scene
         self.backgroundColor = UIColor.lightGray
         self.autoresizingMask = [.flexibleWidth, .flexibleHeight, .flexibleBottomMargin, .flexibleTopMargin, .flexibleLeftMargin ,.flexibleRightMargin]
         self.isPlaying = true
@@ -427,7 +436,6 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
         
         pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(JZPlayerSceneView.handleGesture(gesture:)))
         addGestureRecognizer(pinchGesture!)
-        JZSceneManager.sharedInstance.processNewGameAssets()
     }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
@@ -509,10 +517,17 @@ class JZViewController: UIViewController,UIPopoverPresentationControllerDelegate
         
         self.view.addSubview(sceneView)
         self.view.addSubview(menuView)
+        JZSceneManager.sharedInstance.processNewGameAssets()
     }
     func leftBarButtonPressed(_ sender : UIBarButtonItem) -> Void
     {
-        
+        let alert = UIAlertController(title: "Regenerate level?", message: "Golf GO uses procedrually generated noise map to generate golf site level. This would take a while (about 20 sec)", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
+        })
+        alert.addAction(UIAlertAction(title: "Go Ahead", style: .default) { _ in
+            JZSceneManager.sharedInstance.processNewGameAssets()
+        })
+        present(alert, animated: true)
     }
     
     func rightBarButtonPressed(_ sender : UIBarButtonItem) -> Void
