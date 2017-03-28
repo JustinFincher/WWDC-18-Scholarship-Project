@@ -18,12 +18,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512314707.00612"
+            timestampString = "512387320.57246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "414"
-            endingLineNumber = "414"
-            landmarkName = "renderer(_:updateAtTime:)"
+            startingLineNumber = "425"
+            endingLineNumber = "425"
+            landmarkName = "baseSetup()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -34,13 +34,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512325782.424287"
+            timestampString = "512391010.292826"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "540"
-            endingLineNumber = "540"
-            landmarkName = "update(deltaTime:)"
-            landmarkType = "7">
+            startingLineNumber = "671"
+            endingLineNumber = "671"
+            landmarkName = "JZCameraFollowBehavior"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -50,27 +50,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512325782.424287"
+            timestampString = "512391010.292826"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "541"
-            endingLineNumber = "541"
-            landmarkName = "update(deltaTime:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512325782.424287"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "525"
-            endingLineNumber = "525"
+            startingLineNumber = "672"
+            endingLineNumber = "672"
             landmarkName = "handlePinchNotification(notification:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -82,12 +66,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512314707.00612"
+            timestampString = "512391010.292826"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "422"
-            endingLineNumber = "422"
-            landmarkName = "handleGesture(gesture:)"
+            startingLineNumber = "654"
+            endingLineNumber = "654"
+            landmarkName = "setForce(force:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -98,11 +82,123 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512304423.905835"
+            timestampString = "512387320.57246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "231"
-            endingLineNumber = "231"
+            startingLineNumber = "433"
+            endingLineNumber = "433"
+            landmarkName = "renderer(_:updateAtTime:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TestSceneKit/Playground.swift"
+            timestampString = "512386092.032499"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "240"
+            endingLineNumber = "240"
+            landmarkName = "JZGKEntity"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TestSceneKit/Playground.swift"
+            timestampString = "512386092.032499"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "305"
+            endingLineNumber = "305"
+            landmarkName = "init(frame:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TestSceneKit/Playground.swift"
+            timestampString = "512386092.032499"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "308"
+            endingLineNumber = "308"
+            landmarkName = "init(frame:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TestSceneKit/Playground.swift"
+            timestampString = "512387320.57246"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "603"
+            endingLineNumber = "603"
+            landmarkName = "handleStateChangedNotification(notification:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TestSceneKit/Playground.swift"
+            timestampString = "512391010.292826"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "641"
+            endingLineNumber = "641"
+            landmarkName = "handleStateChangedNotification(notification:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TestSceneKit/Playground.swift"
+            timestampString = "512391010.292826"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "648"
+            endingLineNumber = "648"
+            landmarkName = "setDirection(yAngle:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TestSceneKit/Playground.swift"
+            timestampString = "512391010.292826"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "685"
+            endingLineNumber = "685"
             landmarkName = "update(deltaTime:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -114,28 +210,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512314707.00612"
+            timestampString = "512391010.292826"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "295"
-            endingLineNumber = "295"
-            landmarkName = "btnPressed()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512314707.00612"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "298"
-            endingLineNumber = "298"
-            landmarkName = "btnPressed()"
+            startingLineNumber = "692"
+            endingLineNumber = "692"
+            landmarkName = "update(deltaTime:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

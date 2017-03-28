@@ -27,6 +27,7 @@ let NOISE_SAMPLE_SIZE : Double = 800.0
 let NOTIFICATION_GAME_ASSET_PROCESS_START : String = "NOTIFICATION_GAME_ASSET_PROCESS_START"
 let NOTIFICATION_GAME_ASSET_PROCESS_END : String = "NOTIFICATION_GAME_ASSET_PROCESS_END"
 let NOTIFICATION_GAME_VIEW_PINCH_GESTURE : String = "NOTIFICATION_GAME_VIEW_PINCH_GESTURE"
+let NOTIFICATION_BUTTON_STATE_CHANGED : String = "NOTIFICATION_BUTTON_STATE_CHANGED"
 
 
 
@@ -56,6 +57,9 @@ func - (left: SCNVector3, right: SCNVector3) -> SCNVector3 {
 }
 func -= ( left: inout SCNVector3, right: SCNVector3) {
     left = left - right
+}
+func * (vector: SCNVector3, scalar: Float) -> SCNVector3 {
+    return SCNVector3Make(vector.x * scalar, vector.y * scalar, vector.z * scalar)
 }
 
 class JZHelper
@@ -126,6 +130,10 @@ class JZSceneManager
                 self.scene?.cameraGameObject = JZCameraGameObject()
                 self.scene?.rootNode.addChildNode((self.scene?.cameraGameObject.node)!)
                 self.sceneView?.pointOfView = self.scene?.cameraGameObject.node
+                
+                self.scene?.directionArrow = JZGolfDirectionArrow()
+                self.scene?.directionArrow.golfGameObject = self.scene?.golfBallGameObject
+                self.scene?.golfBallGameObject.addChildNode(go: (self.scene?.directionArrow)!)
                 
                 let directLight : JZGameObject = JZGameObject()
                 directLight.node.light = SCNLight()
@@ -214,6 +222,14 @@ class JZGameObject
     {
         entity.update(deltaTime: seconds)
     }
+    func addChildNode(go : JZGameObject) -> Void
+    {
+        node.addChildNode(go.node)
+    }
+    func addChildNode(nodeToAdd : SCNNode) -> Void
+    {
+        node.addChildNode(nodeToAdd)
+    }
 }
 
 class JZSCNNode : SCNNode
@@ -249,6 +265,7 @@ class JZStartBallButton : UIVisualEffectView
         set
         {
             _currentState = newValue
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: NOTIFICATION_BUTTON_STATE_CHANGED), object: nil, userInfo: ["state":_currentState])
             switch (_currentState)
             {
             case .standby:
@@ -361,9 +378,12 @@ class JZPlayerScene : SCNScene
     var directLightGameObject : JZGameObject!
     var areaLightGameObject : JZGameObject!
     
+    var directionArrow : JZGolfDirectionArrow!
+    
     override init() {
         super.init()
         JZSceneManager.sharedInstance.scene = self
+        physicsWorld.speed = 10.0
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -427,25 +447,43 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
 // MARK: - Controllers / UI
 class JZHelpViewController : UITableViewController
 {
-    var aboutProductCell : UITableViewCell = UITableViewCell()
+    let dataSource : Dictionary<String,String> = ["1. ⛳⛳⛳ What is Golf GO?":"Golf GO is a little game written by ZHENG HAOTIAN (Justin Fincher). It  is built on top of Swift Playground and uses serveral new iOS frameworks and APIs, like SceneKit, ModelIO and GameplayKit.",
+                                                  "2. How to play this little game?":"Just smash the ready button and set golf ball direction, angle and force.",
+                                                  "3. Who is the author?":"ZHENG HAOTIAN (Justin Fincher), currently a junior student in CSU, China. Indie iOS & Unity Developer. More info at https://fincher.im"]
+    var keys : Array<String>? = nil
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        keys = Array(dataSource.keys).sorted()
         tableView.allowsSelection = false
-        aboutProductCell.textLabel?.text = "Golf GO is a small game written by ZHENG HAOTIAN (Justin Fincher). It  is built on top of Swift Playground and uses serveral new iOS framework and APIs, like SceneKit, ModelIO, GameplayKit."
+        tableView.estimatedRowHeight = 85.0
+        tableView.rowHeight = UITableViewAutomaticDimension
     }
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return dataSource.count
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return self.aboutProductCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    {
+        var cell : UITableViewCell! = tableView.dequeueReusableCell(withIdentifier: "tableViewCell")
+        if (cell == nil)
+        {
+            cell = UITableViewCell(style: .default, reuseIdentifier: "tableViewCell")
+        }
+        cell.textLabel?.text = dataSource[(keys?[indexPath.section])!]
+        cell.textLabel?.numberOfLines = 0
+        return cell
     }
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "⛳⛳⛳ What is Golf GO?"
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?
+    {
+        return keys?[section]
+    }
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
     }
 }
 class JZViewController: UIViewController,UIPopoverPresentationControllerDelegate
@@ -508,6 +546,116 @@ class JZNaviController: UINavigationController
     }
 }
 // MARK: - Controllers / Game
+class JZGolfDirectionArrow : JZGameObject
+{
+    let ARROW_HEIGHT = 100.0
+    let POLE_HEIGHT = 300.0
+    let ARROW_DISTANCE_TO_BALL = 20.0
+    weak var golfGameObject : JZGolfBallGameObject? = nil
+    
+    var alwaysOnTopMaterial : SCNMaterial = SCNMaterial()
+    var isHiddenInScene : Bool
+    {
+        get  { return _isHiddenInScene }
+        set
+        {
+            _isHiddenInScene = newValue
+            node.opacity = _isHiddenInScene ? 0.0 : 1.0
+        }
+    }
+    var _isHiddenInScene : Bool = true
+    
+    var arrowNode : SCNNode? = nil
+    var poleNode : SCNNode? = nil
+    
+    var timer : Timer? = nil
+    var timerHelperBool : Bool = false
+    
+    override init()
+    {
+        super.init()
+        setup()
+    }
+    
+    func setup() -> Void
+    {
+        isHiddenInScene = true
+        NotificationCenter.default.addObserver(self, selector: #selector(handleStateChangedNotification(notification:)), name: NSNotification.Name(rawValue: NOTIFICATION_BUTTON_STATE_CHANGED), object: nil)
+        alwaysOnTopMaterial.readsFromDepthBuffer = false
+        alwaysOnTopMaterial.diffuse.contents = UIColor.red
+        alwaysOnTopMaterial.emission.contents = UIColor.red
+        poleNode = SCNNode(geometry: SCNCylinder(radius: 10, height: CGFloat(POLE_HEIGHT)))
+        poleNode?.geometry?.materials = [alwaysOnTopMaterial]
+        poleNode?.renderingOrder = 1
+        arrowNode = SCNNode(geometry: SCNCone(topRadius: 0, bottomRadius: 30, height: 50))
+        arrowNode?.geometry?.materials = [alwaysOnTopMaterial]
+        arrowNode?.renderingOrder = 1
+        addChildNode(nodeToAdd: poleNode!)
+        poleNode?.addChildNode(arrowNode!)
+        arrowNode?.position = SCNVector3(0, (POLE_HEIGHT + ARROW_HEIGHT) / 2,0)
+        arrowNode?.eulerAngles = SCNVector3(0.0, 0.0, 0.0)
+        poleNode?.eulerAngles = SCNVector3(90.0.degreesToRadians,0.0,0.0)
+        poleNode?.position = SCNVector3(0.0,0,(Float(ARROW_DISTANCE_TO_BALL + POLE_HEIGHT / 2.0 + 20.0)))
+        setDirection(yAngle: 0.0)
+    }
+    @objc func handleStateChangedNotification(notification:Notification) -> Void
+    {
+        let userInfo = notification.userInfo
+        let state : JZStartBallButton.JZStartBallButtonType = userInfo!["state"] as! JZStartBallButton.JZStartBallButtonType
+        if (state == .standby)
+        {
+            isHiddenInScene = true
+            let worldArrow : SCNVector3 = self.arrowNode!.convertPosition(SCNVector3(0,0,0), to: nil)
+            let worldBall : SCNVector3 = self.node.convertPosition(SCNVector3(0,0,0), to: nil)
+            let vector : SCNVector3 = (worldArrow - worldBall) * self.scale.z * 0.05
+            self.golfGameObject?.node.physicsBody?.velocity = vector
+            self.eulerAngles = SCNVector3(0,0,0)
+            self.scale = SCNVector3(1,1,1)
+        }else if (state == .choosingFlatDirection)
+        {
+            isHiddenInScene = false
+        }
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 0.02, repeats: true, block: {_ in
+            switch(state)
+            {
+            case .choosingFlatDirection:
+                self.setDirection(yAngle: Double(self.eulerAngles.y) + 5.degreesToRadians)
+                break
+            case .choosingVerticalDirection:
+                let x = Double(self.eulerAngles.x)
+                if (x > 0.degreesToRadians){ self.timerHelperBool = true }
+                if (x < -90.degreesToRadians){ self.timerHelperBool = false }
+                let angle = x + (self.timerHelperBool ? -2 : 2).degreesToRadians
+                self.setAngle(xAngle: angle)
+                break
+            case .choosingForce:
+                let z = self.scale.z
+                if (z > 5){ self.timerHelperBool = true }
+                if (z < 1){ self.timerHelperBool = false }
+                let force = z + (self.timerHelperBool ? -0.2 : 0.2)
+                self.setForce(force: force)
+                break
+            case .standby:
+                break
+            }
+        })
+        
+    }
+    
+    func setDirection(yAngle : Double) -> Void
+    {
+        eulerAngles = SCNVector3(eulerAngles.x,Float(yAngle),eulerAngles.z)
+    }
+    func setAngle(xAngle : Double) -> Void
+    {
+        eulerAngles = SCNVector3(Float(xAngle),eulerAngles.y,eulerAngles.z)
+    }
+    func setForce(force : Float) -> Void {
+        scale = SCNVector3(1,1,force)
+    }
+    
+}
 class JZCameraFollowBehavior : GKComponent
 {
     var ballToFollow : JZGameObject!
@@ -539,7 +687,8 @@ class JZCameraFollowBehavior : GKComponent
         if (entity != nil && ballToFollow != nil)
         {
             let customEntity : JZGKEntity = entity as! JZGKEntity
-            customEntity.gameObject?.position = ballToFollow.position + SCNVector3(3000,3000,3000)
+            let newPos = ballToFollow.node.presentation.position + SCNVector3(3000,3000,3000)
+            customEntity.gameObject?.position = newPos
             customEntity.gameObject?.eulerAngles = SCNVector3(-36.degreesToRadians,45.degreesToRadians,0.degreesToRadians)
         }
     }
@@ -567,13 +716,16 @@ class JZCameraGameObject : JZGameObject
 }
 class JZGolfBallGameObject : JZGameObject
 {
+    let GOLF_BALL_RADIUS = 20.0
     override init()
     {
         super.init()
         name = "Golf Ball"
-        self.geometry = SCNSphere(radius: 20.0)
+        self.geometry = SCNSphere(radius: CGFloat(GOLF_BALL_RADIUS))
+        self.node.castsShadow = true
         self.position = SCNVector3(0, 400 , GOLF_SITE_SQUARE_MESH_SIZE/2)
         self.physicsBody = SCNPhysicsBody(type: .dynamic, shape: nil)
+        self.physicsBody.mass = 1.0
         self.physicsBody.isAffectedByGravity = true
     }
 }
@@ -597,10 +749,10 @@ class JZGolfSiteGameObject : JZGameObject
     {
         super.init()
         name = "Golf Site"
-        JZNoiseMapManager.sharedInstance.generateNoiseMap()
         planeMeshGeometry.widthSegmentCount = GOLF_SITE_SQUARE_MESH_SEGMENTS_COUNT
         planeMeshGeometry.heightSegmentCount = GOLF_SITE_SQUARE_MESH_SEGMENTS_COUNT
         planeMeshGeometry.cornerRadius = 0.0
+        JZNoiseMapManager.sharedInstance.generateNoiseMap()
         position = SCNVector3(0,1,GOLF_SITE_SQUARE_MESH_SIZE/2)
         
         Thread.sleep(forTimeInterval: 1.0)
