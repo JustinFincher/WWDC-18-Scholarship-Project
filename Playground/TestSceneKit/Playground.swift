@@ -172,6 +172,9 @@ class JZSceneManager
                 
                 self.scene?.golfBallGameObject.delegate = self.sceneView?.startBallButton
                 
+                self.scene?.holeGameObject = JZGolfHoleGameObject()
+                self.scene?.rootNode.addChildNode((self.scene?.holeGameObject.node)!)
+                
                 self.setSkyboxTexture()
                 
                 OperationQueue.main.addOperation
@@ -409,6 +412,7 @@ class JZPlayerScene : SCNScene
     var golfBallGameObject : JZGolfBallGameObject!
     var skylineGameObject : JZSkylineGameObject!
     var cameraGameObject : JZCameraGameObject!
+    var holeGameObject : JZGolfHoleGameObject!
     
     var directLightGameObject : JZGameObject!
     var areaLightGameObject : JZGameObject!
@@ -429,6 +433,7 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
 {
     var pinchGesture : UIPinchGestureRecognizer?
     var startBallButton : JZStartBallButton?
+    var holeIndicator : UILabel?
     
     required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
     
@@ -449,7 +454,7 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
         self.autoresizingMask = [.flexibleWidth, .flexibleHeight, .flexibleBottomMargin, .flexibleTopMargin, .flexibleLeftMargin ,.flexibleRightMargin]
         self.isPlaying = true
         self.delegate = self
-        self.allowsCameraControl = false
+        self.allowsCameraControl = true
         self.autoenablesDefaultLighting = false
         if (GAME_DEBUG_MODE_ON)
         {
@@ -458,11 +463,43 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
         startBallButton = JZStartBallButton(frame: CGRect(x: 40, y: self.frame.height - 120, width: self.frame.width - 80, height: 60))
         addSubview(startBallButton!)
         
+        holeIndicator = UILabel(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        holeIndicator?.text = "⏺"
+        holeIndicator?.textAlignment = .center
+        holeIndicator?.font = UIFont.systemFont(ofSize: 26.0)
+        addSubview(holeIndicator!)
+        
         pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(JZPlayerSceneView.handleGesture(gesture:)))
         addGestureRecognizer(pinchGesture!)
     }
     
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
+    {
+        if (JZSceneManager.sharedInstance.scene?.holeGameObject != nil)
+        {
+            let innerRect = CGRect(x: 20, y: 80, width: frame.width - 40, height: frame.height - 100)
+            let go : JZGolfHoleGameObject = (JZSceneManager.sharedInstance.scene?.holeGameObject)!
+            let vector = go.node.convertPosition(SCNVector3(0.0,0.0,0.0), to: JZSceneManager.sharedInstance.scene?.rootNode)
+            let screenSpacePos = projectPoint(vector)
+            let point : CGPoint = CGPoint(x:  CGFloat(screenSpacePos.x) - frame.width / 2, y: CGFloat(screenSpacePos.y) - frame.height / 2 )
+            let innerRectPoint : CGPoint = CGPoint(x: point.x, y: point.y - CGFloat(30.0))
+            var originToSet : CGPoint? = nil;
+            if (abs(innerRectPoint.x) > innerRect.width / 2 || abs(innerRectPoint.y) > innerRect.height / 2)
+            {
+                let scaleX = innerRectPoint.x / ((innerRectPoint.x > 0) ? (innerRect.width / 2) : (-innerRect.width / 2))
+                let scaleY = innerRectPoint.y / ((innerRectPoint.y > 0) ? (innerRect.height / 2) : (-innerRect.height / 2))
+                let scale = (scaleX < scaleY) ? scaleY : scaleX
+                originToSet = CGPoint(x: bounds.width / 2 + innerRectPoint.x / scale, y: bounds.height / 2 + innerRectPoint.y / scale + CGFloat(30.0))
+            }else
+            {
+                originToSet = CGPoint(x: bounds.width / 2 + point.x, y: bounds.height / 2 + point.y)
+            }
+            OperationQueue.main.addOperation {
+                self.holeIndicator?.frame = CGRect(x: originToSet!.x - CGFloat(20.0), y: originToSet!.y - CGFloat(20.0), width: 40, height: 40)
+            }
+        
+        }
+        
         for go in JZSceneManager.sharedInstance.goList
         {
             go.update(deltaTime: time)
@@ -590,6 +627,12 @@ class JZGolfHoleGameObject : JZGameObject
     override init()
     {
         super.init()
+        setup()
+    }
+    func setup() -> Void
+    {
+        geometry = SCNTorus(ringRadius: 100, pipeRadius: 20)
+        self.position = SCNVector3(0, GOLF_SITE_SQUARE_MESH_SIZE / 4 , GOLF_SITE_SQUARE_MESH_SIZE/2)
     }
 }
 class JZGolfDirectionArrow : JZGameObject
@@ -749,12 +792,12 @@ class JZCameraGameObject : JZGameObject
         self.node.camera = SCNCamera()
         self.node.camera?.motionBlurIntensity = 0.6
         self.node.camera?.bloomIntensity = 0.4
-        self.node.camera?.xFov = 70
-        self.node.camera?.yFov = 70
+        self.node.camera?.xFov = 50
+        self.node.camera?.yFov = 50
         self.node.camera?.orthographicScale = 1000
         self.node.camera?.automaticallyAdjustsZRange = false
         self.node.camera?.usesOrthographicProjection = true
-        self.node.camera?.zNear = 0.01
+        self.node.camera?.zNear = 10
         self.node.camera?.zFar = 100000
         self.addComponent(component: cameraFollowBehavior)
     }
