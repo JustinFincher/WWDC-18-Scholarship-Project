@@ -8,7 +8,7 @@
 
 import Foundation
 //: Golf GO ⛳
-//: Build 3
+//: Build 4
 
 import UIKit
 import GameplayKit
@@ -811,7 +811,7 @@ class JZGolfSiteGameObject : JZGameObject
         super.init()
         name = "Golf Site"
         
-        clearMaterial.diffuse.contents = UIColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.15)
+        clearMaterial.diffuse.contents = UIColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.0)
         for i in 0..<4
         {
             let wallNode : SCNNode = SCNNode(geometry: SCNPlane(width: CGFloat(GOLF_SITE_SQUARE_MESH_SIZE)/2, height: CGFloat(GOLF_SITE_SQUARE_MESH_SIZE)/2))
@@ -851,7 +851,6 @@ class JZGolfSiteGameObject : JZGameObject
         let vectorCount : Int = vertexSource.vectorCount
         
         var vertices : [SCNVector3] = [SCNVector3](repeatElement(SCNVector3(0,0,0), count: vectorCount))
-        
         for i in 0..<vectorCount
         {
             var vectorData : [Float] = [Float](repeatElement(0.0, count: 3))
