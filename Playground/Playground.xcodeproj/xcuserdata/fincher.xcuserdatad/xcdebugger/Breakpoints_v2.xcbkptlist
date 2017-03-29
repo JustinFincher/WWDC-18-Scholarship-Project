@@ -18,11 +18,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512468589.898731"
+            timestampString = "512485518.411926"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "463"
-            endingLineNumber = "463"
+            startingLineNumber = "476"
+            endingLineNumber = "476"
             landmarkName = "baseSetup()"
             landmarkType = "7">
          </BreakpointContent>
@@ -34,11 +34,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512476473.489118"
+            timestampString = "512485661.356637"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "760"
-            endingLineNumber = "760"
+            startingLineNumber = "803"
+            endingLineNumber = "803"
             landmarkName = "JZCameraFollowBehavior"
             landmarkType = "3">
          </BreakpointContent>
@@ -50,11 +50,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512476473.489118"
+            timestampString = "512485661.356637"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "761"
-            endingLineNumber = "761"
+            startingLineNumber = "804"
+            endingLineNumber = "804"
             landmarkName = "handlePinchNotification(notification:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -66,11 +66,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512476473.489118"
+            timestampString = "512485661.356637"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "743"
-            endingLineNumber = "743"
+            startingLineNumber = "786"
+            endingLineNumber = "786"
             landmarkName = "setForce(force:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -82,11 +82,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512473797.557843"
+            timestampString = "512485518.411926"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "478"
-            endingLineNumber = "478"
+            startingLineNumber = "491"
+            endingLineNumber = "491"
             landmarkName = "renderer(_:updateAtTime:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -98,11 +98,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512468589.898731"
+            timestampString = "512485518.411926"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "259"
-            endingLineNumber = "259"
+            startingLineNumber = "272"
+            endingLineNumber = "272"
             landmarkName = "JZGKEntity"
             landmarkType = "3">
          </BreakpointContent>
@@ -114,11 +114,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512468589.898731"
+            timestampString = "512485518.411926"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "335"
-            endingLineNumber = "335"
+            startingLineNumber = "348"
+            endingLineNumber = "348"
             landmarkName = "init(frame:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -130,11 +130,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512468589.898731"
+            timestampString = "512485518.411926"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "338"
-            endingLineNumber = "338"
+            startingLineNumber = "351"
+            endingLineNumber = "351"
             landmarkName = "init(frame:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -146,11 +146,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512476473.489118"
+            timestampString = "512485661.356637"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "692"
-            endingLineNumber = "692"
+            startingLineNumber = "735"
+            endingLineNumber = "735"
             landmarkName = "handleStateChangedNotification(notification:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -162,11 +162,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512476473.489118"
+            timestampString = "512485661.356637"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "730"
-            endingLineNumber = "730"
+            startingLineNumber = "773"
+            endingLineNumber = "773"
             landmarkName = "handleStateChangedNotification(notification:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -178,11 +178,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512476473.489118"
+            timestampString = "512485661.356637"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "737"
-            endingLineNumber = "737"
+            startingLineNumber = "780"
+            endingLineNumber = "780"
             landmarkName = "setDirection(yAngle:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -194,11 +194,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512476473.489118"
+            timestampString = "512485661.356637"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "774"
-            endingLineNumber = "774"
+            startingLineNumber = "817"
+            endingLineNumber = "817"
             landmarkName = "update(deltaTime:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -210,11 +210,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512476473.489118"
+            timestampString = "512485661.356637"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "781"
-            endingLineNumber = "781"
+            startingLineNumber = "824"
+            endingLineNumber = "824"
             landmarkName = "update(deltaTime:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -226,11 +226,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512468589.898731"
+            timestampString = "512485518.411926"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "285"
-            endingLineNumber = "285"
+            startingLineNumber = "298"
+            endingLineNumber = "298"
             landmarkName = "nodeVelocityUpdate(sender:velocity:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -242,7 +242,23 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512476473.489118"
+            timestampString = "512485518.411926"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "513"
+            endingLineNumber = "513"
+            landmarkName = "renderer(_:updateAtTime:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TestSceneKit/Playground.swift"
+            timestampString = "512485518.411926"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "500"
@@ -258,12 +274,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TestSceneKit/Playground.swift"
-            timestampString = "512476461.145058"
+            timestampString = "512484951.79522"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "487"
-            endingLineNumber = "487"
-            landmarkName = "renderer(_:updateAtTime:)"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "physicsWorld(_:didBegin:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
