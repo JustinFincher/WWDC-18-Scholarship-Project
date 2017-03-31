@@ -1,14 +1,5 @@
-//
-//  Playground.swift
-//  TestSceneKit
-//
-//  Created by Justin Fincher on 2017/3/25.
-//  Copyright © 2017年 Justin Fincher. All rights reserved.
-//
-
-import Foundation
 //: Golf GO ⛳
-//: Build 4
+//: Build 5
 
 import UIKit
 import GameplayKit
@@ -16,6 +7,7 @@ import SceneKit
 import SceneKit.ModelIO
 import SpriteKit
 import ModelIO
+import PlaygroundSupport
 
 let GAME_DEBUG_MODE_ON : Bool = false
 let XCODE_BEHAVIOR_IPHONE : Bool = true
@@ -132,7 +124,7 @@ class JZSceneManager : NSObject,SCNPhysicsContactDelegate
         }
     }
     
-
+    
     
     func processNewGameAssets() -> Void
     {
@@ -172,7 +164,7 @@ class JZSceneManager : NSObject,SCNPhysicsContactDelegate
                 
                 self.scene?.golfSiteGameObject = JZGolfSiteGameObject()
                 self.scene?.rootNode.addChildNode((self.scene?.golfSiteGameObject.node)!)
-
+                
                 self.scene?.skylineGameObject = JZSkylineGameObject()
                 self.scene?.rootNode.addChildNode((self.scene?.skylineGameObject.node)!)
                 
@@ -293,13 +285,13 @@ class JZStartBallButton : UIVisualEffectView,JZGolfBallGameObjectStatDelegate
     
     func nodeVelocityUpdate(sender: JZGolfBallGameObject, velocity: SCNVector3)
     {
-//        let isRolling : Bool = (velocity.length() > 1.0)
-//        OperationQueue.main.addOperation {
-//            if (self.isHidden != isRolling)
-//            {
-//                self.isHidden = isRolling
-//            }
-//        }
+        //        let isRolling : Bool = (velocity.length() > 1.0)
+        //        OperationQueue.main.addOperation {
+        //            if (self.isHidden != isRolling)
+        //            {
+        //                self.isHidden = isRolling
+        //            }
+        //        }
     }
     
     var currentState : JZStartBallButtonType
@@ -510,7 +502,7 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
             OperationQueue.main.addOperation {
                 self.holeIndicator?.frame = CGRect(x: originToSet!.x - CGFloat(20.0), y: originToSet!.y - CGFloat(20.0), width: 40, height: 40)
             }
-        
+            
         }
         
         for go in JZSceneManager.sharedInstance.goList
@@ -531,7 +523,7 @@ class JZHelpViewController : UITableViewController
 {
     let dataSource : Dictionary<String,String> = ["1. ⛳⛳⛳ What is Golf GO?":"Golf GO is a little game written by ZHENG HAOTIAN (Justin Fincher). It  is built on top of Swift Playground and uses serveral new iOS frameworks and APIs, like SceneKit, ModelIO and GameplayKit.",
                                                   "2. How to play this little game?":"Just smash the ready button and set golf ball direction, angle and force. The ⏺ indicator stands for golf hole, aim for that! If you want to generate another different golf site map, just press the 🔀 button.",
-                                                  "3. What's a procedrually generated map?":"",
+                                                  "3. What's special about this game?":"Golf GO can generate nearly 1 million different maps on runtime because it uses procedrual noise as terrain heightmap.",
                                                   "4. Who is the author?":"ZHENG HAOTIAN (Justin Fincher), currently a junior student in CSU, China. Indie iOS & Unity Developer. More info at https://fincher.im."]
     var keys : Array<String>? = nil
     
@@ -635,7 +627,7 @@ class JZViewController: UIViewController,UIPopoverPresentationControllerDelegate
         })
         present(alert, animated: true)
     }
-
+    
     
 }
 class JZNaviController: UINavigationController
@@ -978,3 +970,10 @@ class JZGolfSiteGameObject : JZGameObject
         self.physicsBody.isAffectedByGravity = false
     }
 }
+
+
+// MARK: - Intro
+var controller : JZViewController = JZViewController()
+var naviController : JZNaviController = JZNaviController(rootViewController: controller)
+PlaygroundPage.current.needsIndefiniteExecution = true
+PlaygroundPage.current.liveView = naviController
