@@ -23,7 +23,7 @@ Golf GO is a golf game with infinte map generation!
 
 Running as a single page application. On iPad Pro 9.7 Simulator.
 
-[[https://github.com/JustinFincher/WWDC-17-Scholarship-Project/blob/master/Screenshot/1.jpg]]
-[[https://github.com/JustinFincher/WWDC-17-Scholarship-Project/blob/master/Screenshot/2.jpg]]
-[[https://github.com/JustinFincher/WWDC-17-Scholarship-Project/blob/master/Screenshot/3.jpg]]
-[[https://github.com/JustinFincher/WWDC-17-Scholarship-Project/blob/master/Screenshot/4.jpg]]
+![1](https://raw.githubusercontent.com/JustinFincher/WWDC-17-Scholarship-Project/master/Screenshot/1.jpg)
+![2](https://raw.githubusercontent.com/JustinFincher/WWDC-17-Scholarship-Project/master/Screenshot/2.jpg)
+![3](https://raw.githubusercontent.com/JustinFincher/WWDC-17-Scholarship-Project/master/Screenshot/3.jpg)
+![4](https://raw.githubusercontent.com/JustinFincher/WWDC-17-Scholarship-Project/master/Screenshot/4.jpg)
