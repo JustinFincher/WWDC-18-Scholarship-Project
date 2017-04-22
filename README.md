@@ -1,10 +1,10 @@
 # GOLF GO.
 
 # Project
-The playground which used for application for WWDC 2017. Unfortunately I didn't make it to the selection (which is really a bummer for me :-( ), so I open source it.
+The playground which used for application for WWDC 2017. Unfortunately I didn't make it to the selection (which is really a bummer for me :-( ), so I open-sourced it.
 
 # Usage 
-The Swift Playground (both Xcode and iPad) is unstable on the moment (2017.4.2), so directly open `Playground.xcodeproj` is more recommended. The code is the same as the playground but intergated into a single page application template.  
+The Swift Playground (both Xcode and iPad) is unstable at the moment (2017.4.2), so directly open `Playground.xcodeproj` is more recommended. The code is the same as the playground but intergated into a single page application template.  
 
 If you really want to use Swift Playground, I would like you to open the “Golf GO.playgroundbook” on iPad instead of “Golf GO.playground”, which contains the disable logging key of Swift Playground to enable a faster runtime performance.  
 Both “Golf GO.playgroundbook” and “Golf GO.playground” have the same code, the only difference is the first has logging system disabled in plist as I mentioned. The logging system is useful but somehow too annoying to log everything out and wastes huge amount of memory.  
