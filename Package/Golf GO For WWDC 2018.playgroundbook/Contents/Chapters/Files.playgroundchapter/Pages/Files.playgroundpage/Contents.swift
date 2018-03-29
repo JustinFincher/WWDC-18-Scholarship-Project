@@ -1,16 +1,8 @@
-//
-//  Playground.swift
-//  TestSceneKit
-//
-//  Created by Justin Fincher on 2017/3/25.
-//  Copyright © 2017年 Justin Fincher. All rights reserved.
-//
-
 import Foundation
-//import PlaygroundSupport
+import PlaygroundSupport
 
 
-//: Golf GO ⛳
+//: Golf GO ⛳ : A Golf Game With Procedurally Generated Terrains.
 //: Build 2018.3.30
 
 import UIKit
@@ -1005,8 +997,8 @@ class JZGolfSiteGameObject : JZGameObject
 }
 
 // MARK: - Intro
-//var controller : JZViewController = JZViewController()
-//var naviController : JZNaviController = JZNaviController(rootViewController: controller)
-//PlaygroundPage.current.needsIndefiniteExecution = true
-//PlaygroundPage.current.liveView = naviController
+var controller : JZViewController = JZViewController()
+var naviController : JZNaviController = JZNaviController(rootViewController: controller)
+PlaygroundPage.current.needsIndefiniteExecution = true
+PlaygroundPage.current.liveView = naviController
 

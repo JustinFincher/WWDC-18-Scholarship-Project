@@ -13,10 +13,12 @@
 	<key>ImageReference</key>
 	<string>Icon.png</string>
 	<key>DeploymentTarget</key>
-	<string>ios10.0</string>
+	<string>ios11.0</string>
 	<key>Chapters</key>
 	<array>
 		<string>Files.playgroundchapter</string>
 	</array>
+	<key>SwiftVersion</key>
+	<string>4.0</string>
 </dict>
 </plist>

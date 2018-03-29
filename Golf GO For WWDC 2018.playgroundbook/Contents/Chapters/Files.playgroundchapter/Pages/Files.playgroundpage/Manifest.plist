@@ -12,5 +12,9 @@
 	<false/>
 	<key>PlaygroundLoggingMode</key>
 	<string>Off</string>
+	<key>DeploymentTarget</key>
+	<string>ios11.0</string>
+	<key>SwiftVersion</key>
+	<string>4.0</string>
 </dict>
 </plist>

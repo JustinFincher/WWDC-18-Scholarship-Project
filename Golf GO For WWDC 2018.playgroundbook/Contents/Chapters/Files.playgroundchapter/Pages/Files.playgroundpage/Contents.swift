@@ -1,5 +1,9 @@
-//: Golf GO ⛳
-//: Build 5
+import Foundation
+import PlaygroundSupport
+
+
+//: Golf GO ⛳ : A Golf Game With Procedurally Generated Terrains.
+//: Build 2018.3.30
 
 import UIKit
 import GameplayKit
@@ -7,15 +11,14 @@ import SceneKit
 import SceneKit.ModelIO
 import SpriteKit
 import ModelIO
-import PlaygroundSupport
 
 let GAME_DEBUG_MODE_ON : Bool = false
 let XCODE_BEHAVIOR_IPHONE : Bool = true
 let GOLF_SITE_SQUARE_MESH_SEGMENTS_COUNT : Int = 149
 let GOLF_SITE_SQUARE_MESH_SIZE : Float = 16000.0
-let GOLF_SITE_HEIGHT_MULTIPIER : Float = 0.1
+let GOLF_SITE_HEIGHT_MULTIPIER : Float = 0.15
 let NOISE_SAMPLE_COUNT : Int = 1024
-let NOISE_SAMPLE_SIZE : Double = 800.0
+let NOISE_SAMPLE_SIZE : Double = 2.0
 let NOTIFICATION_GAME_ASSET_PROCESS_START : String = "NOTIFICATION_GAME_ASSET_PROCESS_START"
 let NOTIFICATION_GAME_ASSET_PROCESS_END : String = "NOTIFICATION_GAME_ASSET_PROCESS_END"
 let NOTIFICATION_GAME_VIEW_PINCH_GESTURE : String = "NOTIFICATION_GAME_VIEW_PINCH_GESTURE"
@@ -83,17 +86,19 @@ class JZHelper
 // MARK: - Data Model
 class JZNoiseMapManager
 {
-    static let sharedInstance = JZNoiseMapManager()
+    private init() { }
+    static let shared = JZNoiseMapManager()
+    
     var noiseMap : GKNoiseMap! = GKNoiseMap()
     var noiseImage : UIImage! = UIImage()
-    init()
-    {
-        
-    }
     
     func generateNoiseMap() -> Void
     {
-        let noiseSource : GKBillowNoiseSource = GKBillowNoiseSource(frequency: Double(JZHelper.randomBetweenNumbers(firstNum: 0.005, secondNum: 0.01)), octaveCount: Int(JZHelper.randomBetweenNumbers(firstNum: 5, secondNum: 10)), persistence: Double(JZHelper.randomBetweenNumbers(firstNum: 0.2, secondNum: 0.5)), lacunarity: Double(JZHelper.randomBetweenNumbers(firstNum: 0.5, secondNum: 2.0)), seed: Int32(JZHelper.randomBetweenNumbers(firstNum: 0, secondNum: 1024)))
+        noiseMap = nil
+        noiseImage = nil
+        
+        let noiseSource : GKRidgedNoiseSource = GKRidgedNoiseSource(frequency: Double(JZHelper.randomBetweenNumbers(firstNum: 1.6, secondNum: 1.6)), octaveCount: Int(JZHelper.randomBetweenNumbers(firstNum: 3, secondNum: 6)), lacunarity: Double(JZHelper.randomBetweenNumbers(firstNum: 5, secondNum: 7)), seed: Int32(JZHelper.randomBetweenNumbers(firstNum: 0, secondNum: 1024)))
+        //        let noiseSource : GKBillowNoiseSource = GKBillowNoiseSource(frequency: Double(JZHelper.randomBetweenNumbers(firstNum: 0.007, secondNum: 0.012)), octaveCount: Int(JZHelper.randomBetweenNumbers(firstNum: 7, secondNum: 12)), persistence: Double(JZHelper.randomBetweenNumbers(firstNum: 0.4, secondNum: 0.7)), lacunarity: Double(JZHelper.randomBetweenNumbers(firstNum: 0.5, secondNum: 2.0)), seed: Int32(JZHelper.randomBetweenNumbers(firstNum: 0, secondNum: 1024)))
         let noise : GKNoise = GKNoise(noiseSource, gradientColors: [-1.0 : JZHelper.UIColorFromHex(hex: "2F971C"), -0.5 : JZHelper.UIColorFromHex(hex: "5CA532") ,-0.0 : JZHelper.UIColorFromHex(hex: "DFED8B"), 0.6 : JZHelper.UIColorFromHex(hex: "A9A172"), 0.8 : JZHelper.UIColorFromHex(hex: "A9A172"), 1.0 : UIColor.white])
         noiseMap = GKNoiseMap(noise, size: vector2(NOISE_SAMPLE_SIZE,NOISE_SAMPLE_SIZE), origin: vector2(0, 0), sampleCount: vector2(Int32(NOISE_SAMPLE_COUNT), Int32(NOISE_SAMPLE_COUNT)), seamless: true)
         let noiseTexture : SKTexture = SKTexture(noiseMap: noiseMap)
@@ -102,18 +107,14 @@ class JZNoiseMapManager
 }
 class JZSceneManager : NSObject,SCNPhysicsContactDelegate
 {
+    private override init() { }
     static let sharedInstance = JZSceneManager()
     
     var scene : JZPlayerScene?
     var sceneView : JZPlayerSceneView?
     var gameMenuView : JZGameMenuView?
     
-    var goList : [JZGameObject]
-    
-    override init()
-    {
-        goList = [JZGameObject]()
-    }
+    var goList : [JZGameObject] = [JZGameObject]()
     
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact)
     {
@@ -124,25 +125,31 @@ class JZSceneManager : NSObject,SCNPhysicsContactDelegate
         }
     }
     
-    
-    
     func processNewGameAssets() -> Void
     {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: NOTIFICATION_GAME_ASSET_PROCESS_START), object: nil)
+        let golfScene = JZPlayerScene()
+        var onGoingScene = self.scene
+        self.scene? = golfScene
+        
         OperationQueue().addOperation(
             {
-                JZNoiseMapManager.sharedInstance.generateNoiseMap()
+                JZNoiseMapManager.shared.generateNoiseMap()
                 
-                let sceneToLoad : JZPlayerScene = JZPlayerScene()
-                self.scene? = sceneToLoad
-                self.scene?.physicsWorld.contactDelegate = self
-                self.sceneView?.scene = self.scene
                 
                 let directLight : JZGameObject = JZGameObject()
                 directLight.node.light = SCNLight()
                 directLight.node.light?.type = SCNLight.LightType.directional
                 directLight.node.light?.color = UIColor.white
                 directLight.node.light?.castsShadow = true
+                if #available(iOS 11.0, *)
+                {
+                    directLight.node.light?.maximumShadowDistance = 100000
+                    directLight.node.light?.shadowCascadeCount = 4
+                }
+                directLight.node.light?.shadowBias = 2.0
+                directLight.node.light?.shadowSampleCount = 3
+                directLight.node.light?.shadowRadius = 10
                 directLight.eulerAngles = SCNVector3(-30.degreesToRadians,0,0)
                 directLight.position = SCNVector3(0,400,0)
                 directLight.node.light?.intensity = 2000
@@ -154,13 +161,18 @@ class JZSceneManager : NSObject,SCNPhysicsContactDelegate
                 areaLight.node.light?.type = SCNLight.LightType.ambient
                 areaLight.node.light?.color = UIColor.white
                 areaLight.position = SCNVector3(0,40,0)
-                areaLight.node.light?.intensity = 500
+                areaLight.node.light?.intensity = 100
                 self.scene?.areaLightGameObject = areaLight
                 self.scene?.rootNode.addChildNode(areaLight.node)
                 
+                
                 self.scene?.cameraGameObject = JZCameraGameObject()
                 self.scene?.rootNode.addChildNode((self.scene?.cameraGameObject.node)!)
+
+                self.sceneView?.scene = golfScene
                 self.sceneView?.pointOfView = self.scene?.cameraGameObject.node
+                onGoingScene = nil
+                
                 
                 self.scene?.golfSiteGameObject = JZGolfSiteGameObject()
                 self.scene?.rootNode.addChildNode((self.scene?.golfSiteGameObject.node)!)
@@ -175,15 +187,18 @@ class JZSceneManager : NSObject,SCNPhysicsContactDelegate
                 self.scene?.directionArrow.golfGameObject = self.scene?.golfBallGameObject
                 self.scene?.golfBallGameObject.addChildNode(go: (self.scene?.directionArrow)!)
                 
-                self.scene?.golfBallGameObject.delegate = self.sceneView?.startBallButton
-                
                 self.scene?.holeGameObject = JZGolfHoleGameObject()
                 self.scene?.golfSiteGameObject.addChildNode(go: (self.scene?.holeGameObject)!)
+                self.scene?.golfBallGameObject.delegate = self.sceneView?.startBallButton
                 
                 self.setSkyboxTexture()
                 
-                OperationQueue.main.addOperation
-                    {
+                
+                self.scene?.physicsWorld.contactDelegate = self
+                
+                
+                OperationQueue.main.addOperation{
+                    
                         NotificationCenter.default.post(name: NSNotification.Name(rawValue: NOTIFICATION_GAME_ASSET_PROCESS_END), object: nil)
                 }
         })
@@ -192,8 +207,9 @@ class JZSceneManager : NSObject,SCNPhysicsContactDelegate
     
     func setSkyboxTexture() -> Void
     {
-        let skyboxTexture : MDLSkyCubeTexture = MDLSkyCubeTexture(name: "skybox", channelEncoding: .uInt8, textureDimensions: vector2(256, 256), turbidity: 0.2, sunElevation: 0.7, upperAtmosphereScattering: 0.4, groundAlbedo: 1.0)
-        self.scene?.background.contents = skyboxTexture.imageFromTexture()?.takeRetainedValue()
+//        let skyboxTexture : MDLSkyCubeTexture = MDLSkyCubeTexture(name: "skybox", channelEncoding: .uInt8, textureDimensions: vector2(256, 256), turbidity: 0.2, sunElevation: 0.7, upperAtmosphereScattering: 0.4, groundAlbedo: 1.0)
+//        skyboxTexture.update()
+//        self.scene?.background.contents = skyboxTexture.imageFromTexture()?.takeRetainedValue()
     }
     
     
@@ -285,13 +301,12 @@ class JZStartBallButton : UIVisualEffectView,JZGolfBallGameObjectStatDelegate
     
     func nodeVelocityUpdate(sender: JZGolfBallGameObject, velocity: SCNVector3)
     {
-        //        let isRolling : Bool = (velocity.length() > 1.0)
-        //        OperationQueue.main.addOperation {
-        //            if (self.isHidden != isRolling)
-        //            {
-        //                self.isHidden = isRolling
-        //            }
-        //        }
+                let isRolling : Bool = (velocity.length() > 4.0)
+                OperationQueue.main.addOperation
+                    {
+                        self.btn.isEnabled = !isRolling
+                        self.btn.setTitle(isRolling ? "Waiting Golf To Stop" : "Ready", for: .normal)
+                }
     }
     
     var currentState : JZStartBallButtonType
@@ -336,13 +351,13 @@ class JZStartBallButton : UIVisualEffectView,JZGolfBallGameObjectStatDelegate
         btn.setTitleColor(UIColor.gray, for: .normal)
         btn.addTarget(self, action: #selector(btnPressed), for: .touchUpInside)
         autoresizingMask = [.flexibleBottomMargin,.flexibleHeight,.flexibleLeftMargin,.flexibleRightMargin,.flexibleTopMargin,.flexibleWidth]
-        addSubview(btn)
+        contentView.addSubview(btn)
         layer.cornerRadius = 5
         layer.masksToBounds = true
         currentState = .standby
     }
     
-    func btnPressed() -> Void
+    @objc func btnPressed() -> Void
     {
         var nextEnum = currentState.rawValue + 1
         if (nextEnum == 5) { nextEnum = 1 }
@@ -380,7 +395,7 @@ class JZGameMenuView : UIView
         startGameIcon = UILabel(frame: CGRect(x: 20, y: 0, width: bounds.size.width - 40, height: bounds.size.height))
         startGameIcon.text = "GENERATING PROCEDRUAL MAP FOR GOLF GO 😐"
         startGameIcon.numberOfLines = 0
-        startGameIcon.font = UIFont.systemFont(ofSize: 26, weight: 10)
+        startGameIcon.font = UIFont.systemFont(ofSize: 26, weight: UIFont.Weight(rawValue: 10))
         startGameIcon.textAlignment = .center
         addSubview(startGameIcon)
         startGameIcon.autoresizingMask = [.flexibleLeftMargin,.flexibleRightMargin,.flexibleTopMargin,.flexibleBottomMargin,.flexibleWidth,.flexibleHeight]
@@ -389,20 +404,20 @@ class JZGameMenuView : UIView
         addSubview(loadingIndicator)
         loadingIndicator.frame.origin = CGPoint(x: frame.size.width / 2.0, y: frame.size.height - 100)
         loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.autoresizingMask = [.flexibleHeight,.flexibleWidth]
+        loadingIndicator.autoresizingMask = [.flexibleTopMargin,.flexibleLeftMargin,.flexibleRightMargin]
         
         NotificationCenter.default.addObserver(self, selector: #selector(onGameAssetProcessStart(notif:)), name: NSNotification.Name(rawValue: NOTIFICATION_GAME_ASSET_PROCESS_START), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onGameAssetProcessEnd(notif:)), name: NSNotification.Name(rawValue: NOTIFICATION_GAME_ASSET_PROCESS_END), object: nil)
     }
     
-    func onGameAssetProcessStart(notif:Notification) -> Void
+    @objc func onGameAssetProcessStart(notif:Notification) -> Void
     {
         self.controller?.navigationController?.setNavigationBarHidden(true, animated: true)
         UIView.animate(withDuration: 0.5, animations: { self.alpha = 1.0 }, completion: { (finished) -> Void in
             self.loadingIndicator.startAnimating()
         })
     }
-    func onGameAssetProcessEnd(notif:Notification) -> Void
+    @objc func onGameAssetProcessEnd(notif:Notification) -> Void
     {
         UIView.animate(withDuration: 0.5, animations: { self.alpha = 0.0 }, completion: { (finished) -> Void in
             self.loadingIndicator.stopAnimating()
@@ -424,10 +439,11 @@ class JZPlayerScene : SCNScene
     
     var directionArrow : JZGolfDirectionArrow!
     
-    override init() {
+    override init()
+    {
         super.init()
-        JZSceneManager.sharedInstance.scene = self
         physicsWorld.speed = 10.0
+        JZSceneManager.sharedInstance.scene = self
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -439,23 +455,34 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
     var pinchGesture : UIPinchGestureRecognizer?
     var startBallButton : JZStartBallButton?
     var holeIndicator : UILabel?
+    var cachedFrame : CGRect
     
-    required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
+    required init?(coder aDecoder: NSCoder)
+    {
+        cachedFrame = CGRect(x: 0, y: 0, width: 0, height: 0)
+        super.init(coder: aDecoder)
+    }
     
     required override init(frame: CGRect)
     {
+        cachedFrame = frame
         super.init(frame: frame)
         JZSceneManager.sharedInstance.sceneView = self
         baseSetup()
     }
     
-    override init(frame: CGRect, options: [String : Any]? = nil) { super.init(frame: frame, options: options) }
+    override init(frame: CGRect, options: [String : Any]? = nil) {
+        cachedFrame = frame
+        super.init(frame: frame, options: options)
+        JZSceneManager.sharedInstance.sceneView = self
+        baseSetup()
+    }
     
     func baseSetup() -> Void
     {
         self.antialiasingMode = .multisampling2X
         self.showsStatistics = true
-        self.backgroundColor = UIColor.green
+        //        self.backgroundColor = UIColor.green
         self.autoresizingMask = [.flexibleWidth, .flexibleHeight, .flexibleBottomMargin, .flexibleTopMargin, .flexibleLeftMargin ,.flexibleRightMargin]
         self.isPlaying = true
         self.delegate = self
@@ -463,7 +490,7 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
         self.autoenablesDefaultLighting = false
         if (GAME_DEBUG_MODE_ON)
         {
-            debugOptions = .showPhysicsShapes
+            debugOptions = .showWireframe
         }
         startBallButton = JZStartBallButton(frame: CGRect(x: 40, y: self.frame.height - 120, width: self.frame.width - 80, height: 60))
         addSubview(startBallButton!)
@@ -480,13 +507,18 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
     {
+        DispatchQueue.main.async
+            {
+                self.cachedFrame = self.frame
+        }
+        
         if (JZSceneManager.sharedInstance.scene?.holeGameObject != nil)
         {
-            let innerRect = CGRect(x: 20, y: 80, width: frame.width - 40, height: frame.height - 100)
+            let innerRect = CGRect(x: 20, y: 80, width: cachedFrame.width - 40, height: cachedFrame.height - 100)
             let go : JZGolfHoleGameObject = (JZSceneManager.sharedInstance.scene?.holeGameObject)!
             let vector = go.node.convertPosition(SCNVector3(0.0,0.0,0.0), to: JZSceneManager.sharedInstance.scene?.rootNode)
             let screenSpacePos = projectPoint(vector)
-            let point : CGPoint = CGPoint(x:  CGFloat(screenSpacePos.x) - frame.width / 2, y: CGFloat(screenSpacePos.y) - frame.height / 2 )
+            let point : CGPoint = CGPoint(x:  CGFloat(screenSpacePos.x) - cachedFrame.width / 2, y: CGFloat(screenSpacePos.y) - cachedFrame.height / 2 )
             let innerRectPoint : CGPoint = CGPoint(x: point.x, y: point.y - CGFloat(30.0))
             var originToSet : CGPoint? = nil;
             if (abs(innerRectPoint.x) > innerRect.width / 2 || abs(innerRectPoint.y) > innerRect.height / 2)
@@ -494,10 +526,10 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
                 let scaleX = innerRectPoint.x / ((innerRectPoint.x > 0) ? (innerRect.width / 2) : (-innerRect.width / 2))
                 let scaleY = innerRectPoint.y / ((innerRectPoint.y > 0) ? (innerRect.height / 2) : (-innerRect.height / 2))
                 let scale = (scaleX < scaleY) ? scaleY : scaleX
-                originToSet = CGPoint(x: bounds.width / 2 + innerRectPoint.x / scale, y: bounds.height / 2 + innerRectPoint.y / scale + CGFloat(30.0))
+                originToSet = CGPoint(x: cachedFrame.width / 2 + innerRectPoint.x / scale, y: cachedFrame.height / 2 + innerRectPoint.y / scale + CGFloat(30.0))
             }else
             {
-                originToSet = CGPoint(x: bounds.width / 2 + point.x, y: bounds.height / 2 + point.y)
+                originToSet = CGPoint(x: cachedFrame.width / 2 + point.x, y: cachedFrame.height / 2 + point.y)
             }
             OperationQueue.main.addOperation {
                 self.holeIndicator?.frame = CGRect(x: originToSet!.x - CGFloat(20.0), y: originToSet!.y - CGFloat(20.0), width: 40, height: 40)
@@ -511,7 +543,7 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
         }
     }
     
-    func handleGesture(gesture : UIPinchGestureRecognizer) -> Void
+    @objc func handleGesture(gesture : UIPinchGestureRecognizer) -> Void
     {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: NOTIFICATION_GAME_VIEW_PINCH_GESTURE), object: self, userInfo: ["gesture":gesture])
     }
@@ -522,7 +554,7 @@ class JZPlayerSceneView : SCNView, SCNSceneRendererDelegate
 class JZHelpViewController : UITableViewController
 {
     let dataSource : Dictionary<String,String> = ["1. ⛳⛳⛳ What is Golf GO?":"Golf GO is a little game written by ZHENG HAOTIAN (Justin Fincher). It  is built on top of Swift Playground and uses serveral new iOS frameworks and APIs, like SceneKit, ModelIO and GameplayKit.",
-                                                  "2. How to play this little game?":"Just smash the ready button and set golf ball direction, angle and force. The ⏺ indicator stands for golf hole, aim for that! If you want to generate another different golf site map, just press the 🔀 button.",
+                                                  "2. How to play this little game?":"Just smash the ready button and set golf ball direction, angle and force. The ⏺ indicator stands for golf hole, aim for that! If you want to generate another different golf site map, just press the 🔀 button. Also: pinch to zoom!",
                                                   "3. What's special about this game?":"Golf GO can generate nearly 1 million different maps on runtime because it uses procedrual noise as terrain heightmap.",
                                                   "4. Who is the author?":"ZHENG HAOTIAN (Justin Fincher), currently a junior student in CSU, China. Indie iOS & Unity Developer. More info at https://fincher.im."]
     var keys : Array<String>? = nil
@@ -576,7 +608,7 @@ class JZViewController: UIViewController,UIPopoverPresentationControllerDelegate
         
         menuView = JZGameMenuView(frame: self.view.frame)
         menuView.controller = self
-        sceneView = JZPlayerSceneView(frame: self.view.frame)
+        sceneView = JZPlayerSceneView(frame: self.view.frame,options: [SCNView.Option.preferredRenderingAPI.rawValue: NSNumber(value: SCNRenderingAPI.metal.rawValue)])
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "🤔", style: .plain, target: self, action: #selector(rightBarButtonPressed(_:)))
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "🔀", style: .plain, target: self, action: #selector(leftBarButtonPressed(_:)))
@@ -587,7 +619,7 @@ class JZViewController: UIViewController,UIPopoverPresentationControllerDelegate
         self.view.addSubview(menuView)
         JZSceneManager.sharedInstance.processNewGameAssets()
     }
-    func leftBarButtonPressed(_ sender : UIBarButtonItem) -> Void
+    @objc func leftBarButtonPressed(_ sender : UIBarButtonItem) -> Void
     {
         let alert = UIAlertController(title: "Regenerate level?", message: "Golf GO uses procedrually generated noise map to generate golf site level. This would take a while (about 20 sec)", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel 😶", style: .cancel) { _ in
@@ -598,7 +630,7 @@ class JZViewController: UIViewController,UIPopoverPresentationControllerDelegate
         present(alert, animated: true)
     }
     
-    func rightBarButtonPressed(_ sender : UIBarButtonItem) -> Void
+    @objc func rightBarButtonPressed(_ sender : UIBarButtonItem) -> Void
     {
         let helpVC : JZHelpViewController = JZHelpViewController(style: .grouped)
         helpVC.title = "Need Help? 🤣"
@@ -619,7 +651,7 @@ class JZViewController: UIViewController,UIPopoverPresentationControllerDelegate
     {
         return UIModalPresentationStyle.none
     }
-    func onBallIntoHole(notification:Notification) -> Void
+    @objc func onBallIntoHole(notification:Notification) -> Void
     {
         let alert = UIAlertController(title: "Yeah 🎉🎉🎉", message: "You hit the golf ball into the hole! 🆒", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "🏌️‍♀️ Again! 🏌️", style: .default) { _ in
@@ -659,7 +691,7 @@ class JZGolfHoleGameObject : JZGameObject
         {
             for y in min..<max
             {
-                let newValue = JZNoiseMapManager.sharedInstance.noiseMap.value(at: vector2(Int32(x), Int32(y)))
+                let newValue = JZNoiseMapManager.shared.noiseMap.value(at: vector2(Int32(x), Int32(y)))
                 if (newValue < noiseValue)
                 {
                     noiseValue = newValue
@@ -794,12 +826,12 @@ class JZCameraFollowBehavior : GKComponent
         super.init(coder: aDecoder)
     }
     
-    func handlePinchNotification(notification:Notification) -> Void
+    @objc func handlePinchNotification(notification:Notification) -> Void
     {
         let customEntity : JZGKEntity = entity as! JZGKEntity
         let userInfo = notification.userInfo
         let gesture : UIPinchGestureRecognizer = userInfo!["gesture"] as! UIPinchGestureRecognizer
-        customEntity.gameObject!.node.camera?.orthographicScale = (gesture.velocity < 0) ? customEntity.gameObject!.node.camera!.orthographicScale + 10 : customEntity.gameObject!.node.camera!.orthographicScale - 10
+        customEntity.gameObject!.node.camera?.orthographicScale = (gesture.velocity < 0) ? customEntity.gameObject!.node.camera!.orthographicScale + 16 : customEntity.gameObject!.node.camera!.orthographicScale - 16
     }
     
     override func update(deltaTime seconds: TimeInterval)
@@ -826,15 +858,12 @@ class JZCameraGameObject : JZGameObject
         super.init()
         name = "Camera"
         self.node.camera = SCNCamera()
-        self.node.camera?.motionBlurIntensity = 0.6
-        self.node.camera?.bloomIntensity = 0.4
-        self.node.camera?.xFov = 50
-        self.node.camera?.yFov = 50
-        self.node.camera?.orthographicScale = 1000
-        self.node.camera?.automaticallyAdjustsZRange = false
+        self.node.camera?.motionBlurIntensity = 1.6
+        self.node.camera?.bloomIntensity = 1.0
+        self.node.camera?.orthographicScale = 2000
+        self.node.camera?.automaticallyAdjustsZRange = true
         self.node.camera?.usesOrthographicProjection = true
-        self.node.camera?.zNear = 10
-        self.node.camera?.zFar = 100000
+        self.node.camera?.saturation = 1.2;
         self.addComponent(component: cameraFollowBehavior)
     }
     
@@ -883,13 +912,17 @@ class JZGolfSiteGameObject : JZGameObject
 {
     var planeMeshGeometry : SCNPlane = SCNPlane(width: CGFloat(GOLF_SITE_SQUARE_MESH_SIZE), height: CGFloat(GOLF_SITE_SQUARE_MESH_SIZE))
     var meshMaterial : SCNMaterial = SCNMaterial()
-    var colliderWalls : [SCNNode]? = nil
     var clearMaterial : SCNMaterial = SCNMaterial()
     
     override init()
     {
         super.init()
         name = "Golf Site"
+        planeMeshGeometry.widthSegmentCount = GOLF_SITE_SQUARE_MESH_SEGMENTS_COUNT
+        planeMeshGeometry.heightSegmentCount = GOLF_SITE_SQUARE_MESH_SEGMENTS_COUNT
+        planeMeshGeometry.cornerRadius = 0.0
+        
+        Thread.sleep(forTimeInterval: 0.1)
         
         clearMaterial.diffuse.contents = UIColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.0)
         for i in 0..<4
@@ -902,13 +935,7 @@ class JZGolfSiteGameObject : JZGameObject
             wallNode.eulerAngles = SCNVector3( ((i % 2 == 0) ? 90.degreesToRadians : 0) , ((i % 2 == 1) ? 90.degreesToRadians : 0) , 0.0 )
         }
         
-        planeMeshGeometry.widthSegmentCount = GOLF_SITE_SQUARE_MESH_SEGMENTS_COUNT
-        planeMeshGeometry.heightSegmentCount = GOLF_SITE_SQUARE_MESH_SEGMENTS_COUNT
-        planeMeshGeometry.cornerRadius = 0.0
         position = SCNVector3(0,1,GOLF_SITE_SQUARE_MESH_SIZE/2)
-        
-        Thread.sleep(forTimeInterval: 1.0)
-        
         eulerAngles = SCNVector3(-90.degreesToRadians,0,0)
         
         self.meshModifer()
@@ -917,11 +944,10 @@ class JZGolfSiteGameObject : JZGameObject
     
     func meshModifer() -> Void
     {
-        
-        var vertexSources : [SCNGeometrySource] = planeMeshGeometry.getGeometrySources(for: .vertex)
+        var vertexSources : [SCNGeometrySource] = planeMeshGeometry.sources(for: .vertex)
         let vertexSource : SCNGeometrySource = vertexSources[0]
         
-        var texCoordSources : [SCNGeometrySource] = planeMeshGeometry.getGeometrySources(for: .texcoord)
+        var texCoordSources : [SCNGeometrySource] = planeMeshGeometry.sources(for: .texcoord)
         let texCorrdSource : SCNGeometrySource = texCoordSources[0]
         
         let stride : Int = vertexSource.dataStride
@@ -929,7 +955,6 @@ class JZGolfSiteGameObject : JZGameObject
         let componentsPerVector : Int = vertexSource.componentsPerVector
         let bytesPerVector : Int = componentsPerVector * vertexSource.bytesPerComponent
         let vectorCount : Int = vertexSource.vectorCount
-        
         var vertices : [SCNVector3] = [SCNVector3](repeatElement(SCNVector3(0,0,0), count: vectorCount))
         for i in 0..<vectorCount
         {
@@ -941,25 +966,25 @@ class JZGolfSiteGameObject : JZGameObject
             let x : Float = vectorData[0]
             let y : Float = vectorData[1]
             let xNormalized : Float = x / GOLF_SITE_SQUARE_MESH_SIZE + 0.5
-            let yNormalized : Float = y / GOLF_SITE_SQUARE_MESH_SIZE + 0.5
+            let yNormalized : Float = 1 - (y / GOLF_SITE_SQUARE_MESH_SIZE + 0.5)
             
-            let vectorToSample : vector_int2 = vector2(Int32(xNormalized * Float(NOISE_SAMPLE_COUNT)), Int32(yNormalized * Float(NOISE_SAMPLE_COUNT)))
-            let noiseMap = JZNoiseMapManager.sharedInstance.noiseMap
-            let noiseValie : Float = (noiseMap!.value(at: vectorToSample)) / 2.0 + 0.5
+            let vectorToSample : vector_int2 = vector2(Int32(Int(xNormalized * Float(NOISE_SAMPLE_COUNT))), Int32(yNormalized * Float(NOISE_SAMPLE_COUNT)))
+            let noiseValue : Float = (JZNoiseMapManager.shared.noiseMap.value(at: vectorToSample)) / 2.0 + 0.5
             
-            let newVector : SCNVector3 = SCNVector3 (vectorData[0],vectorData[1],noiseValie*GOLF_SITE_SQUARE_MESH_SIZE / 2.0*GOLF_SITE_HEIGHT_MULTIPIER)
+            let newVector : SCNVector3 = SCNVector3 (vectorData[0],vectorData[1],noiseValue*GOLF_SITE_SQUARE_MESH_SIZE / 2.0*GOLF_SITE_HEIGHT_MULTIPIER)
             vertices[i] = newVector
         }
         
         let deformedVertexSource : SCNGeometrySource = SCNGeometrySource(vertices: vertices)
         let SCNGeometrySourceArray : [SCNGeometrySource] = [deformedVertexSource, texCorrdSource]
         var deformedGeometry
-            : SCNGeometry = SCNGeometry(sources: SCNGeometrySourceArray, elements: planeMeshGeometry.geometryElements)
+            : SCNGeometry = SCNGeometry(sources: SCNGeometrySourceArray, elements: planeMeshGeometry.elements)
         
         let mdlDeformedMesh : MDLMesh = MDLMesh(scnGeometry: deformedGeometry)
         mdlDeformedMesh.addNormals(withAttributeNamed: MDLVertexAttributeNormal, creaseThreshold: 0.2)
         deformedGeometry = SCNGeometry(mdlMesh: mdlDeformedMesh)
-        meshMaterial.diffuse.contents = JZNoiseMapManager.sharedInstance.noiseImage
+        meshMaterial.lightingModel = SCNMaterial.LightingModel.physicallyBased
+        meshMaterial.diffuse.contents = JZNoiseMapManager.shared.noiseImage
         deformedGeometry.materials = [meshMaterial]
         geometry = deformedGeometry
     }
@@ -971,9 +996,9 @@ class JZGolfSiteGameObject : JZGameObject
     }
 }
 
-
 // MARK: - Intro
 var controller : JZViewController = JZViewController()
 var naviController : JZNaviController = JZNaviController(rootViewController: controller)
 PlaygroundPage.current.needsIndefiniteExecution = true
 PlaygroundPage.current.liveView = naviController
+

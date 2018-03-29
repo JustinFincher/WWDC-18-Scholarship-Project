@@ -1,0 +1,24 @@
+# Help
+
+1. ⛳⛳⛳ What is Golf GO?
+"Golf GO is a little game written by ZHENG HAOTIAN (Justin Fincher). It  is built on top of Swift Playground and uses serveral new iOS frameworks and APIs, like SceneKit, ModelIO and GameplayKit.
+
+2. How to play this little game?
+Just smash the ready button and set golf ball direction, angle and force. The ⏺ indicator stands for golf hole, aim for that! If you want to generate another different golf site map, just press the 🔀 button. Also: pinch to zoom!
+
+3. What's special about this game?
+Golf GO can generate nearly 1 million different maps on runtime because it uses procedrual noise as terrain heightmap.
+
+4. Who is the author?
+ZHENG HAOTIAN (Justin Fincher), currently a junior student in CSU, China. Indie iOS & Unity Developer. More info at https://fincher.im.
+
+# Info
+
+Environment:
+Swift 4.0, iOS 11.0+
+
+Apple Dev Account Used To Submit:
+justzht@hotmail.com
+
+Contact Author:
+zhtsu47@me.com / +86 18556572637
