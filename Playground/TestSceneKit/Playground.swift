@@ -964,6 +964,8 @@ class JZGolfSiteGameObject : JZGameObject
         let bytesPerVector : Int = componentsPerVector * vertexSource.bytesPerComponent
         let vectorCount : Int = vertexSource.vectorCount
         var vertices : [SCNVector3] = [SCNVector3](repeatElement(SCNVector3(0,0,0), count: vectorCount))
+        
+        print(vectorCount)
         for i in 0..<vectorCount
         {
             var vectorData : [Float] = [Float](repeatElement(0.0, count: 3))
