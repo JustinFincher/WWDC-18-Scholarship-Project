@@ -1,7 +1,8 @@
 # GOLF GO.
 
 # Project
-The playground which used for application for WWDC 2017. Unfortunately I didn't make it to the selection (which is really a bummer for me :-( ), so I open-sourced it.
+~~The playground which used for application for WWDC 2017. Unfortunately I didn't make it to the selection (which is really a bummer for me :-( ), so I open-sourced it.~~
+The same playground which isn't chosen by Apple in 2017 won me a WWDC Scholarship this year (2018). I guess the reason that my project didn't make it to the selection in 2017 was a bug in SceneKit (radar `#39027796 Change widthSegmentCount/heightSegmentCount on SCNPlane doesn't change vertex immediately`)
 
 # Usage 
 The Swift Playground (both Xcode and iPad) is unstable at the moment (2017.4.2), so directly open `Playground.xcodeproj` is more recommended. The code is the same as the playground but intergated into a single page application template.  
@@ -23,7 +24,9 @@ Golf GO is a golf game with infinte map generation!
 
 Running as a single page application. On iPad Pro 9.7 Simulator.
 
-![1](https://raw.githubusercontent.com/JustinFincher/WWDC-17-Scholarship-Project/master/Screenshot/1.jpg)
-![2](https://raw.githubusercontent.com/JustinFincher/WWDC-17-Scholarship-Project/master/Screenshot/2.jpg)
-![3](https://raw.githubusercontent.com/JustinFincher/WWDC-17-Scholarship-Project/master/Screenshot/3.jpg)
-![4](https://raw.githubusercontent.com/JustinFincher/WWDC-17-Scholarship-Project/master/Screenshot/4.jpg)
+![1](https://raw.githubusercontent.com/JustinFincher/WWDC-18-Scholarship-Project/master/Screenshot/1.jpg)
+![2](https://raw.githubusercontent.com/JustinFincher/WWDC-18-Scholarship-Project/master/Screenshot/2.jpg)
+![3](https://raw.githubusercontent.com/JustinFincher/WWDC-18-Scholarship-Project/master/Screenshot/3.jpg)
+![4](https://raw.githubusercontent.com/JustinFincher/WWDC-18-Scholarship-Project/master/Screenshot/4.jpg)
+
+
