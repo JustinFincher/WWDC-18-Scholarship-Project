@@ -2,8 +2,8 @@
 # GOLF GO.
 
 # Project
-~~The playground which used for application for WWDC 2017. Unfortunately I didn't make it to the selection (which is really a bummer for me :-( ), so I open-sourced it.~~
-The same playground which isn't chosen by Apple in 2017 won me a WWDC Scholarship this year (2018). I guess the reason that my project didn't make it to the selection in 2017 was a bug in SceneKit (radar `#39027796 Change widthSegmentCount/heightSegmentCount on SCNPlane doesn't change vertex immediately`), which I bypassed with a Thread.Sleep workaround. :-P
+~~The playground which used for application for WWDC 2017. Unfortunately I didn't make it to the selection (which is really a bummer for me :-( ), so I open-sourced it.~~  
+The same playground which wasn't chosen by Apple in 2017 won me a WWDC Scholarship this year (2018). I guess the reason that my project didn't make it to the selection in 2017 was a bug in SceneKit (radar `#39027796 Change widthSegmentCount/heightSegmentCount on SCNPlane doesn't change vertex immediately`), which I bypassed with a Thread.Sleep workaround. :-P
 
 # Usage 
 The Swift Playground (both Xcode and iPad) is unstable at the moment (2017.4.2), so directly open `Playground.xcodeproj` is more recommended. The code is the same as the playground but intergated into a single page application template.  
