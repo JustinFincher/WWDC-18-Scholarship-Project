@@ -1,4 +1,4 @@
-![1](https://raw.githubusercontent.com/JustinFincher/WWDC-18-Scholarship-Project/master/Screenshot/Banner.jpg)
+![Banner](https://raw.githubusercontent.com/JustinFincher/WWDC-17-Scholarship-Project/master/Screenshot/Banner.jpg)
 # GOLF GO.
 
 # Project
