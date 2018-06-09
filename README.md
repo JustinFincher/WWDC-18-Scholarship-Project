@@ -1,6 +1,8 @@
 ![Banner](https://raw.githubusercontent.com/JustinFincher/WWDC-17-Scholarship-Project/master/Screenshot/Banner.jpg)
 # GOLF GO.
 
+> For anyone who wants to have a quick look, you can now download the iOS app from [App Store](https://itunes.apple.com/cn/app/golf-go-scholarship-edition/id1380656648?mt=8)
+
 # Project
 ~~The playground which used for application for WWDC 2017. Unfortunately I didn't make it to the selection (which is really a bummer for me :-( ), so I open-sourced it.~~  
 The same playground which wasn't chosen by Apple in 2017 won me a WWDC Scholarship this year (2018). I guess the reason that my project didn't make it to the selection in 2017 was a bug in SceneKit (radar `#39027796 Change widthSegmentCount/heightSegmentCount on SCNPlane doesn't change vertex immediately`), which I bypassed with a Thread.Sleep workaround. :-P
